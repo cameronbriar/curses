@@ -19,8 +19,6 @@ import string
 class Key():
 
     def __init__(self):
-        
          self.key = {}
-         
          for k in string.printable:
              self.key[k] = ord(k)
