@@ -12,6 +12,7 @@ class Field():
     def __init__(self, size=None):
         self.display = curses.initscr()
         self.display.keypad(1)
+        self.display.timeout(0)
         curses.noecho()
         curses.cbreak()
 
@@ -19,7 +20,7 @@ class Field():
         self.size = size if size else [self.dims[0]-1, self.dims[1]-1]
         self.y = self.size[0]
         self.x = self.size[1]
-        self.grid = ['0'] * self.x * self.y
+        self.grid = [' '] * self.x * self.y
 
         self.midx = self.x / 2
         self.midy = self.y / 2

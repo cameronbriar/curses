@@ -40,7 +40,7 @@ class Ball():
         return
 
 class Saver():
-    def __init__(self, field=Field(), ball=Ball(), speed=0.005):
+    def __init__(self, field=Field(), ball=Ball(), speed=0.009):
         self.field = field
         self.ball  = ball
         self.speed = speed
@@ -48,12 +48,13 @@ class Saver():
 
     def update(self):
         hitWall = self.walled(self.ball)
+
         if hitWall:
             self.ball.bounce(hitWall)
 
-        self.clearTrail(self.ball, "~~*~~", True)
-
+        self.clearTrail(self.ball, " ", True)
         self.ball.move()
+
 
         self.field.addItem(self.ball.image, self.ball.getPosition())
         self.field.deploy()
@@ -73,9 +74,14 @@ class Saver():
         return None
 
     def run(self):
-        while 1:
+        run = 1
+        while run:
+            c = self.field.display.getch()
+            if c == ord('q'):
+                run = 0
             self.update()
             time.sleep(self.speed)
+        self.field.destroy()
         return
 
     def clearTrail(self, obj, remains=" ", centered=False):
