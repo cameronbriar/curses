@@ -3,6 +3,7 @@ Simple animation for your shell
 """
 from field import Field
 import time
+import random
 
 class Ball():
     def __init__(self, image="O", x=1, y=1):
@@ -19,9 +20,9 @@ class Ball():
         return
 
     def bounce(self, direction):
-        if direction in ['up', 'down']:
+        if 'up' in direction or 'down' in direction:
             self.dy *= -1
-        elif direction in ['left', 'right']:
+        if 'right' in direction or 'left' in direction:
             self.dx *= -1
         return
 
@@ -40,37 +41,41 @@ class Ball():
         return
 
 class Saver():
-    def __init__(self, field=Field(), ball=Ball(), speed=0.009):
-        self.field = field
-        self.ball  = ball
-        self.speed = speed
+    def __init__(self, balls=int(random.random() * 100)):
+        self.field = Field()
+        self.balls  = [Ball(random.choice(["o", "O"]), int(random.random() * self.field.x-1)+1, int(random.random() * self.field.y-1)+1) for x in range(balls)]
+        self.speed = 0.009
         return
 
     def update(self):
-        hitWall = self.walled(self.ball)
+        for ball in self.balls:
+            hitWall = self.walled(ball)
 
-        if hitWall:
-            self.ball.bounce(hitWall)
+            if hitWall:
+                ball.bounce(hitWall)
 
-        self.clearTrail(self.ball, " ", True)
-        self.ball.move()
+            self.clearTrail(ball, " ", True)
+            ball.move()
 
 
-        self.field.addItem(self.ball.image, self.ball.getPosition())
+            self.field.addItem(ball.image, ball.getPosition())
         self.field.deploy()
         return
 
     def walled(self, ball):
+        direction = []
         if ball.x < 1:
-            return 'right'
+            direction.append('right')
         elif ball.x >= self.field.x-1:
-            return 'left'
+            direction.append('left')
 
         if ball.y < 1:
-            return 'down'
+            direction.append('down')
         elif ball.y >= self.field.y-1:
-            return 'up'
+            direction.append('up')
 
+        if len(direction):
+            return ' '.join(direction)
         return None
 
     def run(self):
@@ -89,6 +94,6 @@ class Saver():
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
-s = Saver()
+s = Saver(50)
 s.run()
 
