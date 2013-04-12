@@ -41,10 +41,11 @@ class Ball():
         return
 
 class Saver():
-    def __init__(self, balls=int(random.random() * 100)):
+    def __init__(self, balls=int(random.random() * 100), trail=" "):
         self.field = Field()
         self.balls  = [Ball(random.choice(["o", "O"]), int(random.random() * self.field.x-1)+1, int(random.random() * self.field.y-1)+1) for x in range(balls)]
         self.speed = 0.009
+        self.trail = trail
         return
 
     def update(self):
@@ -54,7 +55,7 @@ class Saver():
             if hitWall:
                 ball.bounce(hitWall)
 
-            self.clearTrail(ball, " ", True)
+            self.clearTrail(ball, self.trail, True)
             ball.move()
 
 
@@ -94,6 +95,6 @@ class Saver():
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
-s = Saver(50)
+s = Saver(50, "*")
 s.run()
 
