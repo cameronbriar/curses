@@ -6,7 +6,7 @@ import time
 import random
 
 class Ball():
-    def __init__(self, image="O", x=1, y=1):
+    def __init__(self, image=random.choice(["o", "O", "@", "( )"]), x=1, y=1):
         self.image = image
         self.x = x
         self.y = y
@@ -43,7 +43,7 @@ class Ball():
 class Saver():
     def __init__(self, balls=int(random.random() * 100), trail=" "):
         self.field = Field()
-        self.balls  = [Ball(random.choice(["o", "O"]), int(random.random() * self.field.x-1)+1, int(random.random() * self.field.y-1)+1) for x in range(balls)]
+        self.balls = [Ball(x=int(random.random() * self.field.x-1)+1, y=int(random.random() * self.field.y-1)+1) for x in range(balls)]
         self.speed = 0.009
         self.trail = trail
         return
@@ -52,14 +52,21 @@ class Saver():
         for ball in self.balls:
             hitWall = self.walled(ball)
 
-            if hitWall:
+            if hitWall: # wall collision
                 ball.bounce(hitWall)
+
+            # ball collision
+
 
             self.clearTrail(ball, self.trail, True)
             ball.move()
 
 
             self.field.addItem(ball.image, ball.getPosition())
+
+        # clear the field randomly (1% chance)
+        if random.choice(range(100)) == 1:
+            self.field.clearField()
         self.field.deploy()
         return
 
@@ -95,6 +102,6 @@ class Saver():
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
-s = Saver(50, "*")
+s = Saver(50, " ~ ")
 s.run()
 

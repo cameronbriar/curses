@@ -38,6 +38,10 @@ class Field():
         self.grid = field
         return
 
+    def clearField(self):
+        self.grid = [' '] * self.x * self.y
+        return
+
     def deploy(self):
         for x, i in enumerate(self.grid):
             y = x / self.x
@@ -52,7 +56,10 @@ class Field():
             x -= len(item)/2
         for c, i in enumerate(item):
             spot = x + y + c
-            self.grid[spot] = i
+            try:
+                self.grid[spot] = i
+            except:
+                continue
 
 # Usage
 #field = Field()
