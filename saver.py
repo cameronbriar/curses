@@ -102,6 +102,7 @@ class Saver():
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
-s = Saver(50, " ~ ")
+tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
+s = Saver(50, tails())
 s.run()
 
