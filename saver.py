@@ -57,15 +57,13 @@ class Saver():
 
             # ball collision
 
-
             self.clearTrail(ball, self.trail, True)
             ball.move()
 
-
             self.field.addItem(ball.image, ball.getPosition())
 
-        # clear the field randomly (1% chance)
-        if random.choice(range(100)) == 1:
+        # clear the field randomly (.1% chance)
+        if random.choice(range(1000)) == 1:
             self.field.clearField()
         self.field.deploy()
         return

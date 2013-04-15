@@ -13,8 +13,33 @@ class Field():
         self.display = curses.initscr()
         self.display.keypad(1)
         self.display.timeout(0)
+
         curses.noecho()
         curses.cbreak()
+        curses.start_color()
+        curses.use_default_colors()
+
+        curses.init_pair(1, curses.COLOR_BLACK,   -1)
+        curses.init_pair(2, curses.COLOR_BLUE,    -1)
+        curses.init_pair(3, curses.COLOR_CYAN,    -1)
+        curses.init_pair(4, curses.COLOR_GREEN,   -1)
+        curses.init_pair(5, curses.COLOR_MAGENTA, -1)
+        curses.init_pair(6, curses.COLOR_RED,     -1)
+        curses.init_pair(7, curses.COLOR_WHITE,   -1)
+        curses.init_pair(8, curses.COLOR_YELLOW,  -1)
+
+        self.colors = {
+            'black'   : 1,
+            'blue'    : 2,
+            'cyan'    : 3,
+            'green'   : 4,
+            'magenta' : 5,
+            'red'     : 6,
+            'white'   : 7,
+            'yellow'  : 8,
+        }
+
+        self.random_color = lambda: curses.color_pair(self.colors[random.choice(self.colors.keys())])
 
         self.dims = self.display.getmaxyx()
         self.size = size if size else [self.dims[0]-1, self.dims[1]-1]
@@ -68,5 +93,5 @@ class Field():
 #field.setField(grid)
 #field.addItem('X', field.midp)
 #field.deploy()
-#time.sleep(5)
+#curses.napms(5000)
 #field.destroy()
