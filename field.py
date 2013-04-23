@@ -87,11 +87,11 @@ class Field():
                 continue
 
 # Usage
-#field = Field()
-#grid = field.getField()
-#grid = [random.choice(['|', '_']) for x in grid]
-#field.setField(grid)
-#field.addItem('X', field.midp)
-#field.deploy()
-#curses.napms(5000)
-#field.destroy()
+field = Field()
+grid = field.getField()
+grid = [random.choice(['|', '_']) for x in grid]
+field.setField(grid)
+field.addItem('X', field.midp)
+field.deploy()
+curses.napms(5000)
+field.destroy()
