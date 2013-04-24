@@ -49,6 +49,7 @@ class Paddle:
         self.sprite = Sprite()
         self.image = self.sprite.paddle()
         self.length = len(self.image)
+        self.half = self.length/2
         self.x = start_x 
         self.dx = 1
         return
@@ -130,9 +131,14 @@ class Blocker:
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
+    def play(self, paddle, ball):
+        paddle.x = ball.x - paddle.half
+        return
+
     def update(self, keystroke=0, timer=0):
         self.remove_paddle()
         self.control(keystroke)
+        self.play(self.paddle, self.ball)    # uncomment for AI
         paddle_coord = (self.paddle_start_y, self.paddle.x)
         self.field.addItem(self.paddle.image, paddle_coord)
 
