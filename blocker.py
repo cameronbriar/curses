@@ -67,7 +67,7 @@ class Blocker:
         self.field  = Field()
         self.weapon = Weapon()
 
-        self.speed = 0.0009
+        self.speed = 0.009
         self.running = False
         
         self.paddle_start_x = self.field.midx
@@ -115,7 +115,7 @@ class Blocker:
         if ball.y < 1:
             direction.append('down')
         elif ball.y >= self.field.y-1:
-            direction.append('up')
+            self.running = False
 
         if len(direction):
             return ' '.join(direction)
