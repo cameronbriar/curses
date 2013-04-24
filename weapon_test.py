@@ -7,7 +7,7 @@ w = Weapon()
 
 def test_weapon_appearance():
     for weapon in dir(w):
-        if '_' not in weapon:
+        if '__' not in weapon:
             image = getattr(w, weapon)()
             print image, ' ' * 10, weapon
             print '\n\n'
@@ -19,4 +19,3 @@ Weapon appearance test
 """
 
 test_weapon_appearance()
-
