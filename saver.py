@@ -117,6 +117,7 @@ class Saver():
         return
 
 tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
+#tails = lambda: "FREE"
 s = Saver(50, tails())
 s.run()
 

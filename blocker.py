@@ -68,7 +68,7 @@ class Blocker:
         self.field  = Field()
         self.weapon = Weapon()
 
-        self.speed = 0.009
+        self.speed = 0.001
         self.running = False
         
         self.paddle_start_x = self.field.midx
@@ -77,7 +77,7 @@ class Blocker:
         
         self.paddle = Paddle(self.paddle_x)
 
-        self.ball = Ball(x=52, y=5)
+        self.ball = Ball(x=self.field.midx-5, y=5)
 
         self.key = Key().key
         return
@@ -130,19 +130,20 @@ class Blocker:
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
-    def update(self, keystroke=0):
+    def update(self, keystroke=0, timer=0):
         self.remove_paddle()
         self.control(keystroke)
         paddle_coord = (self.paddle_start_y, self.paddle.x)
         self.field.addItem(self.paddle.image, paddle_coord)
 
-        # ball
-        hitWall = self.walled(self.ball)
-        if hitWall:
-            self.ball.bounce(hitWall)
-        self.clearTrail(self.ball, " ")
-        self.ball.move()
-        self.field.addItem(self.ball.image, self.ball.getPosition())
+        if timer % 10 == 1:
+            # ball
+            hitWall = self.walled(self.ball)
+            if hitWall:
+                self.ball.bounce(hitWall)
+            self.clearTrail(self.ball, " ")
+            self.ball.move()
+            self.field.addItem(self.ball.image, self.ball.getPosition())
         self.field.deploy()
         return 
 
@@ -150,11 +151,12 @@ class Blocker:
         if not self.running:
             self.init_game()
             self.running = True
-        
+        timer = 0 
         while self.running:
             c = self.field.display.getch()
-            self.update(c)
+            self.update(c, timer)
             time.sleep(self.speed)
+            timer += 1
         self.field.destroy()
         return
 
