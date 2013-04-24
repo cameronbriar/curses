@@ -10,7 +10,7 @@ def test_weapon_appearance():
         if '_' not in weapon:
             image = getattr(w, weapon)()
             print image, ' ' * 10, weapon
-            print '\n' * 3
+            print '\n\n'
     return
 
 print """
