@@ -1,7 +1,7 @@
 """
 Simple animation for your shell
 """
-from _field import Field
+from field import Field
 import time
 import random
 
@@ -39,7 +39,7 @@ class Ball():
     def position(self, x, y):
         self.x, self.y = x, y
         return
-    
+
 
 class Saver():
     def __init__(self, balls=int(random.random() * 100), trail=" "):
@@ -68,14 +68,14 @@ class Saver():
             self.clearTrail(ball, self.trail, True)
             ball.move()
 
-            self.field.addItem(ball.image, ball.getPosition())
+            self.field.addItem(ball.image, ball.getPosition(), color='blue')
 
         # clear the field randomly (.1% chance)
         if random.choice(range(1000)) == 1:
             self.field.clearField()
         self.field.deploy()
         return
-    
+
     def walled(self, ball):
         direction = []
         if ball.x < 1:
@@ -112,6 +112,6 @@ class Saver():
 #tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
 #tails = lambda: "FREE"
 tails = lambda: " "
-s = Saver(1, tails())
+s = Saver(5, tails())
 s.run()
 

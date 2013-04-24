@@ -71,10 +71,13 @@ class Field():
         for x, i in enumerate(self.grid):
             y = x / self.x
             x = x % self.x
-            self.display.addstr(y, x, i))
+            if type(i) == tuple:
+                self.display.addstr(y, x, i[0], curses.color_pair(self.colors[i[1]]))
+            else:
+                self.display.addstr(y, x, i)
         self.display.refresh()
 
-    def addItem(self, item, coords, centered=False):
+    def addItem(self, item, coords, centered=False, color='black'):
         y = coords[0] * self.x
         x = coords[1]
         if centered:
@@ -82,7 +85,10 @@ class Field():
         for c, i in enumerate(item):
             spot = x + y + c
             try:
-                self.grid[spot] = i
+                if color != 'black':
+                    self.grid[spot] = (i, color)
+                else:
+                    self.grid[spot] = i
             except:
                 continue
 
