@@ -60,6 +60,7 @@ class Saver():
                 ball.bounce(hitWall)
 
                 if 'more' in hitWall:
+                    self.balls.pop(self.balls.index(ball))
                     self.balls.append(self.new_ball())
 
             # ball collision
@@ -110,6 +111,6 @@ class Saver():
 
 tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
 #tails = lambda: "FREE"
-s = Saver(50, tails())
+s = Saver(1, tails())
 s.run()
 
