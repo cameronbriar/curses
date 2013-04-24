@@ -48,6 +48,7 @@ class Paddle:
     def __init__(self, start_x=0):
         self.sprite = Sprite()
         self.image = self.sprite.paddle()
+        self.length = len(self.image)
         self.x = start_x 
         self.dx = 1
         return
@@ -76,7 +77,7 @@ class Blocker:
         
         self.paddle = Paddle(self.paddle_x)
 
-        self.ball = Ball()
+        self.ball = Ball(x=52, y=5)
 
         self.key = Key().key
         return
@@ -114,8 +115,11 @@ class Blocker:
 
         if ball.y < 1:
             direction.append('down')
-        elif ball.y >= self.field.y-1:
-            self.running = False
+        elif ball.y >= self.field.y-2:
+            if ball.x >= self.paddle.x and ball.x <= (self.paddle.x + self.paddle.length):
+                direction.append('up')
+            else:
+                self.running = False
 
         if len(direction):
             return ' '.join(direction)
