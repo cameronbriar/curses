@@ -42,7 +42,6 @@ class Ball():
     def position(self, x, y):
         self.x, self.y = x, y
         return
-    
 
 class Paddle:
     def __init__(self, start_x=0):
@@ -50,7 +49,7 @@ class Paddle:
         self.image = self.sprite.paddle()
         self.length = len(self.image)
         self.half = self.length/2
-        self.x = start_x 
+        self.x = start_x
         self.dx = 1
         return
 
@@ -71,11 +70,11 @@ class Blocker:
 
         self.speed = 0.001
         self.running = False
-        
+
         self.paddle_start_x = self.field.midx
-        self.paddle_start_y = self.field.y - 1 
+        self.paddle_start_y = self.field.y - 1
         self.paddle_x = self.field.midx
-        
+
         self.paddle = Paddle(self.paddle_x)
 
         self.ball = Ball(x=self.field.midx-5, y=5)
@@ -106,7 +105,7 @@ class Blocker:
     def init_game(self):
         self.add_paddle()
         return
-    
+
     def walled(self, ball):
         direction = []
         if ball.x < 1:
@@ -125,7 +124,7 @@ class Blocker:
         if len(direction):
             return ' '.join(direction)
         return None
-    
+
     def clearTrail(self, obj, remains=" ", centered=False):
         for i in range(len(obj.image)):
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
@@ -151,13 +150,13 @@ class Blocker:
             self.ball.move()
             self.field.addItem(self.ball.image, self.ball.getPosition())
         self.field.deploy()
-        return 
+        return
 
     def run(self):
         if not self.running:
             self.init_game()
             self.running = True
-        timer = 0 
+        timer = 0
         while self.running:
             c = self.field.display.getch()
             self.update(c, timer)

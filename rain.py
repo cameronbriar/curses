@@ -5,8 +5,8 @@ from field import Field
 import time
 import random
 
-class Ball():
-    def __init__(self, image=random.choice(["o", "O", "@", "( )"]), x=1, y=1):
+class Drop():
+    def __init__(self, image=random.choice(["o", "O", "@", "."]), x=1, y=1):
         self.image = image
         self.x = x
         self.y = y
@@ -41,51 +41,52 @@ class Ball():
         return
 
 
-class Saver():
-    def __init__(self, balls=int(random.random() * 100), trail=" "):
+class Rain():
+    def __init__(self, drops=int(random.random() * 100), trail=" "):
         self.field = Field()
-        self.balls = [Ball(x=int(random.random() * self.field.x-1)+1, y=int(random.random() * self.field.y-1)+1) for x in range(balls)]
+        self.drops = [Drop(x=int(random.random() * self.field.x-1)+1, y=int(random.random() * self.field.y-1)+1) for x in range(drops)]
         self.speed = 0.009
         self.trail = trail
+        self.wind  = random.choice((1, -1, 0))
         return
 
-    def new_ball(self):
-        return Ball(x=int(random.random() * self.field.x-1)+1, y=int(random.random() * self.field.y-1)+1)
+    def new_drop(self):
+        newdrop = Drop(x=int(random.random() * self.field.x-1)+1, y=int(random.random() * self.field.y-1)+1)
+        newdrop.dx = self.wind
+        return newdrop
 
     def update(self):
-        for ball in self.balls:
-            hitWall = self.walled(ball)
+        for drop in self.drops:
+            hitWall = self.walled(drop)
 
             if hitWall: # wall collision
-                ball.bounce(hitWall)
+                drop.bounce(hitWall)
 
                 if 'more' in hitWall:
-                    self.balls.pop(self.balls.index(ball))
-                    self.balls.append(self.new_ball())
+                    self.drops.pop(self.drops.index(drop))
+                    self.drops.append(self.new_drop())
 
-            # ball collision
+            self.clearTrail(drop, self.trail, True)
+            drop.move()
 
-            self.clearTrail(ball, self.trail, True)
-            ball.move()
-
-            self.field.addItem(ball.image, ball.getPosition(), color='blue')
+            self.field.addItem(drop.image, drop.getPosition(), color='blue')
 
         # clear the field randomly (.1% chance)
-        if random.choice(range(1000)) == 1:
-            self.field.clearField()
+        #if random.choice(range(1000)) == 1:
+        #    self.field.clearField()
         self.field.deploy()
         return
 
-    def walled(self, ball):
+    def walled(self, drop):
         direction = []
-        if ball.x < 1:
+        if drop.x < 1:
             direction.append('right')
-        elif ball.x >= self.field.x-1:
+        elif drop.x >= self.field.x-1:
             direction.append('left')
 
-        if ball.y < 1:
+        if drop.y < 1:
             direction.append('down')
-        elif ball.y >= self.field.y-1:
+        elif drop.y >= self.field.y-1:
             direction.append('more')
 
         if len(direction):
@@ -112,6 +113,6 @@ class Saver():
 #tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
 #tails = lambda: "FREE"
 tails = lambda: " "
-s = Saver(5, tails())
-s.run()
+r = Rain(5, tails())
+r.run()
 
