@@ -109,8 +109,9 @@ class Saver():
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
-tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
+#tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
 #tails = lambda: "FREE"
+tails = lambda: " "
 s = Saver(1, tails())
 s.run()
 
