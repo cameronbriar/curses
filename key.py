@@ -15,10 +15,16 @@ string DATA
     whitespace = '\t\n\x0b\x0c\r '
 """
 import string
+import curses
 
 class Key():
 
     def __init__(self):
-         self.key = {}
-         for k in string.printable:
-             self.key[k] = ord(k)
+        self.key = {}
+        for k in string.printable:
+            self.key[k] = ord(k)
+        for k in dir(curses):
+            if 'KEY_' in k:
+                name = k.split('_')[1].lower()
+                self.key[name] = getattr(curses, k)
+        return
