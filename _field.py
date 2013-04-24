@@ -71,7 +71,7 @@ class Field():
         for x, i in enumerate(self.grid):
             y = x / self.x
             x = x % self.x
-            self.display.addstr(y, x, i))
+            self.display.addstr(y, x, i, curses.color_pair(self.colors['blue']))
         self.display.refresh()
 
     def addItem(self, item, coords, centered=False):

@@ -137,8 +137,8 @@ class Blocker:
 
     def update(self, keystroke=0, timer=0):
         self.remove_paddle()
-        self.control(keystroke)
         self.play(self.paddle, self.ball)    # uncomment for AI
+        self.control(keystroke)
         paddle_coord = (self.paddle_start_y, self.paddle.x)
         self.field.addItem(self.paddle.image, paddle_coord)
 
