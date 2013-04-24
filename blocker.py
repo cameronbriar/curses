@@ -8,6 +8,42 @@ from key import Key
 import time
 import random
 
+class Ball():
+    def __init__(self, image=random.choice(["o", "O", "@", "( )"]), x=1, y=1):
+        self.image = image
+        self.x = x
+        self.y = y
+        self.dx = 1
+        self.dy = 1
+        return
+
+    def move(self):
+        self.x += self.dx
+        self.y += self.dy
+        return
+
+    def bounce(self, direction):
+        if 'up' in direction or 'down' in direction:
+            self.dy *= -1
+        if 'right' in direction or 'left' in direction:
+            self.dx *= -1
+        return
+
+    def getVelocity(self):
+        return (self.dx, self.dy)
+
+    def velocity(self, dx, dy):
+        self.dx, self.dy = dx, dy
+        return
+
+    def getPosition(self):
+        return (self.y, self.x)
+
+    def position(self, x, y):
+        self.x, self.y = x, y
+        return
+    
+
 class Paddle:
     def __init__(self, start_x=0):
         self.sprite = Sprite()
@@ -31,7 +67,7 @@ class Blocker:
         self.field  = Field()
         self.weapon = Weapon()
 
-        self.speed = 0.009
+        self.speed = 0.0009
         self.running = False
         
         self.paddle_start_x = self.field.midx
@@ -39,6 +75,8 @@ class Blocker:
         self.paddle_x = self.field.midx
         
         self.paddle = Paddle(self.paddle_x)
+
+        self.ball = Ball()
 
         self.key = Key().key
         return
@@ -66,12 +104,41 @@ class Blocker:
     def init_game(self):
         self.add_paddle()
         return
+    
+    def walled(self, ball):
+        direction = []
+        if ball.x < 1:
+            direction.append('right')
+        elif ball.x >= self.field.x-1:
+            direction.append('left')
+
+        if ball.y < 1:
+            direction.append('down')
+        elif ball.y >= self.field.y-1:
+            direction.append('up')
+
+        if len(direction):
+            return ' '.join(direction)
+        return None
+    
+    def clearTrail(self, obj, remains=" ", centered=False):
+        for i in range(len(obj.image)):
+            self.field.addItem(remains, [obj.y, obj.x + i], centered)
+        return
 
     def update(self, keystroke=0):
         self.remove_paddle()
         self.control(keystroke)
         paddle_coord = (self.paddle_start_y, self.paddle.x)
         self.field.addItem(self.paddle.image, paddle_coord)
+
+        # ball
+        hitWall = self.walled(self.ball)
+        if hitWall:
+            self.ball.bounce(hitWall)
+        self.clearTrail(self.ball, " ")
+        self.ball.move()
+        self.field.addItem(self.ball.image, self.ball.getPosition())
         self.field.deploy()
         return 
 

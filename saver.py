@@ -39,6 +39,22 @@ class Ball():
     def position(self, x, y):
         self.x, self.y = x, y
         return
+    
+    def walled(self, ball):
+        direction = []
+        if ball.x < 1:
+            direction.append('right')
+        elif ball.x >= self.field.x-1:
+            direction.append('left')
+
+        if ball.y < 1:
+            direction.append('down')
+        elif ball.y >= self.field.y-1:
+            direction.append('up')
+
+        if len(direction):
+            return ' '.join(direction)
+        return None
 
 class Saver():
     def __init__(self, balls=int(random.random() * 100), trail=" "):
