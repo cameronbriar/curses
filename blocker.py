@@ -51,6 +51,8 @@ class Paddle:
         self.half = self.length/2
         self.x = start_x
         self.dx = 1
+
+        self.rx = (1, 0)
         return
 
     def move(self, direction):
@@ -58,8 +60,13 @@ class Paddle:
              self.dx = -1
         else:
              self.dx = 1
-        if self.x > 1:
+        if self.x > self.rx[0] and self.x < self.rx[1]:
             self.x += self.dx
+        else:
+            if self.x <= self.rx[0] and direction == "RIGHT":
+                self.x += self.dx
+            elif self.x >= self.rx[1] and direction == "LEFT":
+                self.x += self.dx
         return
 
 class Blocker:
@@ -77,6 +84,7 @@ class Blocker:
         self.paddle_x = self.field.midx
 
         self.paddle = Paddle(self.paddle_x)
+        self.paddle.rx = (1, self.field.x - len(self.paddle.image))
 
         self.ball = Ball(x=self.field.midx-5, y=1)
 
@@ -131,7 +139,7 @@ class Blocker:
             if ball.x >= self.paddle.x and ball.x <= (self.paddle.x + self.paddle.length):
                 direction.append('up')
             else:
-                self.running = False
+                self.running = True
 
         # collidables
         if self.collidables != []:
@@ -156,12 +164,15 @@ class Blocker:
         return
 
     def play(self, paddle, ball):
+        x = paddle.x
         paddle.x = ball.x - paddle.half
+        if paddle.x < 1 or paddle.x > (self.field.x - len(paddle.image)):
+            paddle.x = x
         return
 
     def update(self, keystroke=0, timer=0):
         self.remove_paddle()
-        self.play(self.paddle, self.ball)    # uncomment for AI
+        #self.play(self.paddle, self.ball)    # uncomment for AI
         self.control(keystroke)
         paddle_coord = (self.paddle_start_y, self.paddle.x)
         self.field.addItem(self.paddle.image, paddle_coord)
