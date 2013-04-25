@@ -119,9 +119,9 @@ field = Field()
 #grid = field.getField()
 #grid = [random.choice(['|', '_']) for x in grid]
 #field.setField(grid)
-import weapon
-w = weapon.Weapon().cube(size=35)
-field.addItem(w, field.midp, True)
-field.deploy()
-curses.napms(5000)
-field.destroy()
+#import weapon
+#w = weapon.Weapon().cube(size=35)
+#field.addItem(w, field.midp, True)
+#field.deploy()
+#curses.napms(5000)
+#field.destroy()

@@ -20,7 +20,70 @@ class Particle(object):
     def set_area(self):
         """
         a particle's area is similar to its bounding area
-        if a point is blank (" ") then it's considered an
-        open space for other particles to exist in
+        if a point is blank (whitespace) then it's considered an
+        open space (mass-less) for other particles to exist
         """
+        x, y = self.x, self.y
+        dimensions = 1
+        for part in self.image.split('\n'):
+            for piece in part:
+                mass = 1 if piece != " " else 0
+                self.area.append((x, y, mass))
+                x += 1
+            x, y = self.x, self.y + dimensions
+            dimensions += 1
         return
+
+    def reset_area(self):
+        self.area = []
+        self.set_area()
+        return
+
+class Ball(Particle):
+    def init(self, image="O"):
+        self.image = image
+        self.set_area()
+
+class Block(Particle):
+    def init(self, image="|", length=1):
+        self.length = length
+        self.image = image * length
+        self.set_area()
+
+    def set_size(self, length=1):
+        self.length = length
+        self.image = self.image * length
+        self.reset_area()
+
+class Cube(Particle):
+    def init(self, image="|", width=1, length=1):
+        self.width = width
+        self.length = length
+        self.image = '\n'.join([image * length] * ((width/2)+1))
+        self.set_area()
+
+    def set_image(self):
+        self.image = '\n'.join([self.image * self.length] * ((self.width/2)+1))
+        return
+
+    def set_size(self, width=None, length=None):
+        self.width = width or self.width
+        self.length = length or self.length
+        self.set_image()
+        self.reset_area()
+
+b = Ball()
+b.init("o")
+print b.area
+
+b = Block()
+b.init(length=1)
+print b.area
+b.set_size(5)
+print b.area
+
+c = Cube()
+c.init()
+print c.area
+c.set_size(width=10, length=10)
+print c.area

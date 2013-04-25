@@ -9,7 +9,7 @@ import time
 import random
 
 class Ball():
-    def __init__(self, image=random.choice(["o", "O", "@", "( )"]), x=1, y=1):
+    def __init__(self, image=random.choice(["o", "O", "@"]), x=1, y=1):
         self.image = image
         self.x = x
         self.y = y
@@ -98,13 +98,13 @@ class Blocker:
         self.field.addItem(self.paddle.image, coord)
         return
 
-    def add_block(self, size=5):
+    def add_blocks(self, size=5):
         for x in range(1, self.field.x, size*2):
-            coord = (5, x)
-            #block = self.weapon.block(length=size)
-            block = self.weapon.cube(size=size)
-            self.field.addItem(block, coord)
-            self.collidables.append((coord, block))
+            for row in range(3):
+               coord = (5*(row+1), x)
+               block = self.weapon.block(length=size)
+               self.field.addItem(block, coord)
+               self.collidables.append((coord, block))
         return
 
     def remove_paddle(self):
@@ -124,7 +124,7 @@ class Blocker:
 
     def init_game(self):
         self.add_paddle()
-        self.add_block()
+        self.add_blocks()
         return
 
     def collision(self, ball):
@@ -146,7 +146,7 @@ class Blocker:
         if self.collidables != []:
             for item in self.collidables:
                 y, x = item[0]
-                if ball.y in (y+1, y-1):
+                if ball.y in (y, y+1, y-1):
                     if ball.x >= x and ball.x < (x + len(item[1]) - 1):
                         self.field.removeItem(item[1], item[0])
                         self.collidables.pop(self.collidables.index(item))
