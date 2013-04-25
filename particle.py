@@ -37,7 +37,6 @@ class Particle(object):
     def reset_area(self):
         self.area = []
         self.set_area()
-        return
 
 class Ball(Particle):
     def init(self, image="O"):
@@ -64,7 +63,6 @@ class Cube(Particle):
 
     def set_image(self):
         self.image = '\n'.join([self.image * self.length] * ((self.width/2)+1))
-        return
 
     def set_size(self, width=None, length=None):
         self.width = width or self.width
