@@ -66,7 +66,7 @@ class Blocker:
     def __init__(self):
         print 'Blocker v1.0'
 
-        self.field  = Field()
+        self.field  = Field(title="Blocker")
         self.weapon = Weapon()
 
         self.speed = 0.001
