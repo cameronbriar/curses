@@ -39,7 +39,7 @@ class Ball():
     def position(self, x, y):
         self.x, self.y = x, y
         return
-    
+
     def walled(self, ball):
         direction = []
         if ball.x < 1:
@@ -58,7 +58,7 @@ class Ball():
 
 class Saver():
     def __init__(self, balls=int(random.random() * 100), trail=" "):
-        self.field = Field()
+        self.field = Field(title="Term Saver")
         self.balls = [Ball(x=int(random.random() * self.field.x-1)+1, y=int(random.random() * self.field.y-1)+1) for x in range(balls)]
         self.speed = 0.009
         self.trail = trail
