@@ -7,3 +7,11 @@ class Sprite:
 
     def paddle(self):
         return "[--------]"
+
+    def kirby(self, direction="front"):
+        if direction == "front":
+            return "<(-_-)>"
+        elif direction == "left":
+            return "<(-_-<)"
+        elif direction == "right":
+            return "(>-_-)>"
