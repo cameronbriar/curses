@@ -43,7 +43,7 @@ class Drop():
 
 class Rain():
     def __init__(self, drops=int(random.random() * 100), trail=" "):
-        self.field = Field()
+        self.field = Field(title="Zen Rain")
         self.drops = [Drop(x=int(random.random() * self.field.x-1)+1, y=int(random.random() * self.field.y-1)+1) for x in range(drops)]
         self.speed = 0.009
         self.trail = trail
