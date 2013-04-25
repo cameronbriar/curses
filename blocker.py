@@ -52,7 +52,7 @@ class Paddle:
         self.x = start_x
         self.dx = 1
 
-        self.rx = (1, 0)
+        self.rx = (0, 0)
         return
 
     def move(self, direction):
@@ -101,7 +101,8 @@ class Blocker:
     def add_block(self, size=5):
         for x in range(1, self.field.x, size*2):
             coord = (5, x)
-            block = self.weapon.block(length=size)
+            #block = self.weapon.block(length=size)
+            block = self.weapon.cube(size=size)
             self.field.addItem(block, coord)
             self.collidables.append((coord, block))
         return
@@ -172,7 +173,7 @@ class Blocker:
 
     def update(self, keystroke=0, timer=0):
         self.remove_paddle()
-        #self.play(self.paddle, self.ball)    # uncomment for AI
+        self.play(self.paddle, self.ball)    # uncomment for AI
         self.control(keystroke)
         paddle_coord = (self.paddle_start_y, self.paddle.x)
         self.field.addItem(self.paddle.image, paddle_coord)

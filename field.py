@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-import os
 import sys
-import time
 import random
 
 import curses
@@ -86,36 +84,44 @@ class Field():
     def removeItem(self, item, coords, centered=False):
         y = coords[0] * self.x
         x = coords[1]
+        item = item.split('\n')
         if centered:
-            x -= len(item)/2
-        for c, i in enumerate(item):
-            spot = x + y + c
-            try:
-                self.grid[spot] = " "
-            except:
-                continue
+            x -= len(item[0])/2
+        for d, part in enumerate(item):
+            for c, i in enumerate(part):
+                spot = x + y + c
+                try:
+                    self.grid[spot] = " "
+                except:
+                    continue
+            y += self.x
 
-    def addItem(self, item, coords, centered=False, color='black'):
+    def addItem(self, item, coords, centered=False, color=None):
         y = coords[0] * self.x
         x = coords[1]
+        item = item.split('\n')
         if centered:
-            x -= len(item)/2
-        for c, i in enumerate(item):
-            spot = x + y + c
-            try:
-                if color != 'black':
-                    self.grid[spot] = (i, color)
-                else:
-                    self.grid[spot] = i
-            except:
-                continue
+            x -= len(item[0])/2
+        for d, part in enumerate(item):
+            for c, i in enumerate(part):
+                spot = x + y + c
+                try:
+                    if color:
+                        self.grid[spot] = (i, color)
+                    else:
+                        self.grid[spot] = i
+                except:
+                    continue
+            y += self.x
 
 # Usage
-#field = Field()
+field = Field()
 #grid = field.getField()
 #grid = [random.choice(['|', '_']) for x in grid]
 #field.setField(grid)
-#field.addItem('X', field.midp)
-#field.deploy()
-#curses.napms(5000)
-#field.destroy()
+import weapon
+w = weapon.Weapon().cube(size=35)
+field.addItem(w, field.midp, True)
+field.deploy()
+curses.napms(5000)
+field.destroy()
