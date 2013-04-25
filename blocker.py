@@ -58,7 +58,8 @@ class Paddle:
              self.dx = -1
         else:
              self.dx = 1
-        self.x += self.dx
+        if self.x > 1:
+            self.x += self.dx
         return
 
 class Blocker:
@@ -77,14 +78,24 @@ class Blocker:
 
         self.paddle = Paddle(self.paddle_x)
 
-        self.ball = Ball(x=self.field.midx-5, y=5)
+        self.ball = Ball(x=self.field.midx-5, y=1)
 
         self.key = Key().key
+
+        self.collidables = []
         return
 
     def add_paddle(self):
         coord = (self.paddle_start_y, self.paddle_start_x)
         self.field.addItem(self.paddle.image, coord)
+        return
+
+    def add_block(self, size=5):
+        for x in range(1, self.field.x, size*2):
+            coord = (5, x)
+            block = self.weapon.block(length=size)
+            self.field.addItem(block, coord)
+            self.collidables.append((coord, block))
         return
 
     def remove_paddle(self):
@@ -104,9 +115,10 @@ class Blocker:
 
     def init_game(self):
         self.add_paddle()
+        self.add_block()
         return
 
-    def walled(self, ball):
+    def collision(self, ball):
         direction = []
         if ball.x < 1:
             direction.append('right')
@@ -121,12 +133,25 @@ class Blocker:
             else:
                 self.running = False
 
-        if len(direction):
+        # collidables
+        if self.collidables != []:
+            for item in self.collidables:
+                y, x = item[0]
+                if ball.y in (y+1, y-1):
+                    if ball.x >= x and ball.x < (x + len(item[1]) - 1):
+                        self.field.removeItem(item[1], item[0])
+                        self.collidables.pop(self.collidables.index(item))
+                        if ball.dy > 0:
+                            direction.append('up')
+                        else:
+                            direction.append('down')
+        if direction != []:
             return ' '.join(direction)
         return None
 
     def clearTrail(self, obj, remains=" ", centered=False):
         for i in range(len(obj.image)):
+            y, x = obj.y, obj.x + i
             self.field.addItem(remains, [obj.y, obj.x + i], centered)
         return
 
@@ -143,9 +168,9 @@ class Blocker:
 
         if timer % 10 == 1:
             # ball
-            hitWall = self.walled(self.ball)
-            if hitWall:
-                self.ball.bounce(hitWall)
+            bounce = self.collision(self.ball)
+            if bounce:
+                self.ball.bounce(bounce)
             self.clearTrail(self.ball, " ")
             self.ball.move()
             self.field.addItem(self.ball.image, self.ball.getPosition())

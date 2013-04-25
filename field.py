@@ -77,6 +77,23 @@ class Field():
                 self.display.addstr(y, x, i)
         self.display.refresh()
 
+    def itemAt(self, coord):
+        y = coord[0] * self.x
+        x = coord[1]
+        return self.grid[x + y]
+
+    def removeItem(self, item, coords, centered=False):
+        y = coords[0] * self.x
+        x = coords[1]
+        if centered:
+            x -= len(item)/2
+        for c, i in enumerate(item):
+            spot = x + y + c
+            try:
+                self.grid[spot] = " "
+            except:
+                continue
+
     def addItem(self, item, coords, centered=False, color='black'):
         y = coords[0] * self.x
         x = coords[1]
