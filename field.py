@@ -9,10 +9,11 @@ import curses
 
 class Field():
 
-    def __init__(self, size=None):
+    def __init__(self, title="Curses", size=None):
         self.display = curses.initscr()
         self.display.keypad(1)
         self.display.timeout(0)
+        sys.stdout.write("\x1b]2;"+title+"\x07")
 
         curses.noecho()
         curses.cbreak()
