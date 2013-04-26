@@ -76,7 +76,7 @@ class Blocker:
         self.field  = Field(title="Blocker")
         self.weapon = Weapon()
 
-        self.speed = 0.001
+        self.speed = 0.0001
         self.running = False
 
         self.paddle_start_x = self.field.midx
