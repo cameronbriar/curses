@@ -154,8 +154,12 @@ class Blocker:
                             direction.append('up')
                         else:
                             direction.append('down')
+                        if ball.y == y:
+                            ball.dx *= -1
         if direction != []:
             return ' '.join(direction)
+        if self.collidables == []:
+            self.add_blocks()
         return None
 
     def clearTrail(self, obj, remains=" ", centered=False):
