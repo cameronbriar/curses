@@ -34,7 +34,7 @@ class Drop():
         return
 
     def getPosition(self):
-        return (self.y, self.x)
+        return (self.x, self.y)
 
     def position(self, x, y):
         self.x, self.y = x, y
@@ -69,7 +69,7 @@ class Rain():
             self.clearTrail(drop, self.trail, True)
             drop.move()
 
-            self.field.addItem(drop.image, drop.getPosition(), color='blue')
+            self.field.write_at(item=drop.image, coords=drop.getPosition(), color='blue')
 
         # clear the field randomly (.1% chance)
         #if random.choice(range(1000)) == 1:
@@ -107,12 +107,12 @@ class Rain():
 
     def clearTrail(self, obj, remains=" ", centered=False):
         for i in range(len(obj.image)):
-            self.field.addItem(remains, [obj.y, obj.x + i], centered)
+            self.field.write_at(remains, (obj.x + i), obj.y, None, centered, None)
         return
 
 #tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
 #tails = lambda: "FREE"
 tails = lambda: " "
-r = Rain(5, tails())
+r = Rain(505, tails())
 r.run()
 

@@ -37,7 +37,7 @@ class Ball():
         return
 
     def getPosition(self):
-        return (self.y, self.x)
+        return (self.x, self.y)
 
     def position(self, x, y):
         self.x, self.y = x, y
@@ -94,23 +94,23 @@ class Blocker:
         return
 
     def add_paddle(self):
-        coord = (self.paddle_start_y, self.paddle_start_x)
-        self.field.addItem(self.paddle.image, coord)
+        coord = (self.paddle_start_x, self.paddle_start_y)
+        self.field.write_at(item=self.paddle.image, coords=coord)
         return
 
     def add_blocks(self, size=5):
-        for x in range(1, self.field.x, size*2):
+        for x in range(size, (self.field.x-size), size*2):
             for row in range(3):
-               coord = (5*(row+1), x)
+               coord = (x, 5*(row+1))
                block = self.weapon.block(length=size)
-               self.field.addItem(block, coord)
+               self.field.write_at(item=block, coords=coord)
                self.collidables.append((coord, block))
         return
 
     def remove_paddle(self):
-        coord = (self.paddle_start_y, self.paddle.x)
+        coord = (self.paddle.x, self.paddle_start_y)
         blank = ' ' * len(self.paddle.image)
-        self.field.addItem(blank, coord)
+        self.field.write_at(item=blank, coords=coord)
         return
 
     def control(self, keystroke):
@@ -140,22 +140,20 @@ class Blocker:
             if ball.x >= self.paddle.x and ball.x <= (self.paddle.x + self.paddle.length):
                 direction.append('up')
             else:
-                self.running = True
+                self.running = False
 
         # collidables
         if self.collidables != []:
             for item in self.collidables:
-                y, x = item[0]
+                x, y = item[0]
                 if ball.y in (y, y+1, y-1):
-                    if ball.x >= x and ball.x < (x + len(item[1]) - 1):
-                        self.field.removeItem(item[1], item[0])
-                        self.collidables.pop(self.collidables.index(item))
-                        if ball.dy > 0:
-                            direction.append('up')
-                        else:
-                            direction.append('down')
+                    if ball.x >= x and ball.x <= (x + len(item[1])):
                         if ball.y == y:
                             ball.dx *= -1
+                        else:
+                            ball.dy *= -1
+                        self.field.remove(coords=item[0], item=item[1])
+                        self.collidables.pop(self.collidables.index(item))
         if direction != []:
             return ' '.join(direction)
         if self.collidables == []:
@@ -164,8 +162,8 @@ class Blocker:
 
     def clearTrail(self, obj, remains=" ", centered=False):
         for i in range(len(obj.image)):
-            y, x = obj.y, obj.x + i
-            self.field.addItem(remains, [obj.y, obj.x + i], centered)
+            x, y = obj.x + i, obj.y
+            self.field.write_at(item=remains, coords=(obj.x+i, obj.y), centered=centered)
         return
 
     def play(self, paddle, ball):
@@ -179,8 +177,8 @@ class Blocker:
         self.remove_paddle()
         self.play(self.paddle, self.ball)    # uncomment for AI
         self.control(keystroke)
-        paddle_coord = (self.paddle_start_y, self.paddle.x)
-        self.field.addItem(self.paddle.image, paddle_coord)
+        paddle_coord = (self.paddle.x, self.paddle_start_y)
+        self.field.write_at(item=self.paddle.image, coords=paddle_coord)
 
         if timer % 10 == 1:
             # ball
@@ -189,7 +187,7 @@ class Blocker:
                 self.ball.bounce(bounce)
             self.clearTrail(self.ball, " ")
             self.ball.move()
-            self.field.addItem(self.ball.image, self.ball.getPosition())
+            self.field.write_at(item=self.ball.image, coords=self.ball.getPosition())
         self.field.deploy()
         return
 

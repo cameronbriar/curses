@@ -34,7 +34,7 @@ class Ball():
         return
 
     def getPosition(self):
-        return (self.y, self.x)
+        return (self.x, self.y)
 
     def position(self, x, y):
         self.x, self.y = x, y
@@ -76,11 +76,11 @@ class Saver():
             self.clearTrail(ball, self.trail, True)
             ball.move()
 
-            self.field.addItem(ball.image, ball.getPosition())
+            self.field.write_at(item=ball.image, coords=ball.getPosition())
 
         # clear the field randomly (.1% chance)
         if random.choice(range(1000)) == 1:
-            self.field.clearField()
+            self.field.clear()
         self.field.deploy()
         return
 
@@ -113,7 +113,7 @@ class Saver():
 
     def clearTrail(self, obj, remains=" ", centered=False):
         for i in range(len(obj.image)):
-            self.field.addItem(remains, [obj.y, obj.x + i], centered)
+            self.field.write_at(item=remains, coords=[obj.x+i, obj.y], centered=centered)
         return
 
 tails = lambda: random.choice([' >< ', ' # ', '*', ' * ', ' () ', ') (', '-_-', '[]', '][', '] ['])
