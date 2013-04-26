@@ -43,7 +43,7 @@ class Ball(Particle):
         self.image = image
         self.set_area()
 
-class Block(Particle):
+class Rectangle(Particle):
     def init(self, image="|", length=1):
         self.length = length
         self.image = image * length
@@ -54,7 +54,7 @@ class Block(Particle):
         self.image = self.image * length
         self.reset_area()
 
-class Cube(Particle):
+class Block(Particle):
     def init(self, image="|", width=1, length=1):
         self.width = width
         self.length = length
@@ -70,18 +70,27 @@ class Cube(Particle):
         self.set_image()
         self.reset_area()
 
-b = Ball()
-b.init("o")
-print b.area
+class Polygon(Particle):
+    def init(self, image=["XXX", "X X", "X X"], width=1, length=1):
+        self.width  = width
+        self.length = length
+        for i in image:
+            length = len(i)
+            self.length = length if length > self.length else self.length
+            self.width += 1
+        self.image = '\n'.join(image)
+        self.set_area()
+
+b = Rectangle()
+b.init(length=1)
+print "Rectangle of length", b.length, "\n", b.area
+b.set_size(5)
+print "Rectangle of length", b.length, "\n", b.area
 
 b = Block()
-b.init(length=1)
-print b.area
-b.set_size(5)
-print b.area
+b.init(width=10, length=10)
+print "Block of length", b.length, "and width", b.width, "\n", b.area
 
-c = Cube()
-c.init()
-print c.area
-c.set_size(width=10, length=10)
-print c.area
+p = Polygon()
+p.init()
+print "Polygon with 2 empty spaces \n", p.area
