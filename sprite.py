@@ -8,6 +8,10 @@ class Sprite:
     def paddle(self):
         return "[--------]"
 
+    def stick(self): # paddle was taken
+        return "|[]|\n|  |\n|  |\n|  |\n|  |\n|[]|\n"
+
+
     def kirby(self, direction="front"):
         if direction == "front":
             return "<(-_-)>"
