@@ -1,195 +1,193 @@
 #!/usr/bin/env python
-
+# -*- encoding: utf-8 -*-
 from field import Field
 from sprite import Sprite
 from weapon import Weapon
-from key import Key
+from key import key
 
 import time
 import random
 
-class Ball():
+
+LEFT = 'left'
+RIGHT = 'right'
+UP = 'up'
+DOWN = 'down'
+
+
+class Ball(object):
     def __init__(self, image=random.choice(["o", "O", "@"]), x=1, y=1):
         self.image = image
+        self.length = len(image)
         self.x = x
         self.y = y
         self.dx = 1
         self.dy = 1
-        return
 
-    def move(self):
+    def bounce(self, directions):
+        if UP in directions or DOWN in directions:
+            self.dy *= -1
+        if RIGHT in directions or LEFT in directions:
+            self.dx *= -1
+
         self.x += self.dx
         self.y += self.dy
-        return
 
-    def bounce(self, direction):
-        if 'up' in direction or 'down' in direction:
-            self.dy *= -1
-        if 'right' in direction or 'left' in direction:
-            self.dx *= -1
-        return
-
-    def getVelocity(self):
-        return (self.dx, self.dy)
-
-    def velocity(self, dx, dy):
-        self.dx, self.dy = dx, dy
-        return
-
-    def getPosition(self):
+    @property
+    def position(self):
         return (self.x, self.y)
 
-    def position(self, x, y):
-        self.x, self.y = x, y
-        return
 
-class Paddle:
-    def __init__(self, start_x=0):
+class Paddle(object):
+    def __init__(self, startX=0):
         self.sprite = Sprite()
         self.image = self.sprite.paddle()
         self.length = len(self.image)
-        self.half = self.length/2
-        self.x = start_x
+        self.half = self.length / 2
+        self.x = startX
         self.dx = 1
-
-        self.rx = (0, 0)
-        return
+        self.boundary = (0, 0)
 
     def move(self, direction):
-        if direction == "LEFT":
-             self.dx = -1
-        else:
-             self.dx = 1
-        if self.x > self.rx[0] and self.x < self.rx[1]:
+        self.dx = -1 if direction == LEFT else 1
+        if self.can_move(direction):
             self.x += self.dx
-        else:
-            if self.x <= self.rx[0] and direction == "RIGHT":
-                self.x += self.dx
-            elif self.x >= self.rx[1] and direction == "LEFT":
-                self.x += self.dx
-        return
 
-class Blocker:
+    def can_move(self, direction):
+        if self.x in range(*self.boundary):
+            return True
+        if direction == RIGHT and self.x <= self.boundary[0]:
+            return True
+        if direction == LEFT and self.x >= self.boundary[1]:
+            return True
+        return False
+
+    def hit(self, ball):  # should probably just be an int
+        return ball.x in range(self.x, self.x + self.length + 1)
+
+    def set_boundary(self, coords):
+        self.boundary = coords
+
+
+class BlockerGame(object):
     def __init__(self):
-        print 'Blocker v1.0'
-
-        self.field  = Field(title="Blocker")
+        self.field = Field(title="Blocker")
         self.weapon = Weapon()
 
         self.speed = 0.0001
         self.running = False
 
-        self.paddle_start_x = self.field.midx
-        self.paddle_start_y = self.field.y - 1
-        self.paddle_x = self.field.midx
+        self.paddleStartX = self.field.midx
+        self.paddleStartY = self.field.y - 1
+        self.paddleX = self.field.midx
 
-        self.paddle = Paddle(self.paddle_x)
-        self.paddle.rx = (1, self.field.x - len(self.paddle.image))
+        self.paddle = Paddle(self.paddleX)
+        xMax = self.field.x - len(self.paddle.image)
+        self.paddle.set_boundary((1, xMax))
 
-        self.ball = Ball(x=self.field.midx-5, y=1)
+        self.ball = Ball(x=self.field.midx - 5, y=10)
 
-        self.key = Key().key
+        self.key = key
 
         self.collidables = []
-        return
 
     def add_paddle(self):
-        coord = (self.paddle_start_x, self.paddle_start_y)
+        coord = (self.paddleStartX, self.paddleStartY)
         self.field.write_at(item=self.paddle.image, coords=coord)
-        return
 
-    def add_blocks(self, size=5):
-        for x in range(size, (self.field.x-size), size*2):
-            for row in range(3):
-               coord = (x, 5*(row+1))
-               block = self.weapon.block(length=size)
-               self.field.write_at(item=block, coords=coord)
-               self.collidables.append((coord, block))
-        return
+    def add_blocks(self, size=5, rows=4, marginY=None, marginX=None):
+        marginY = size if marginY is None else marginY
+        marginX = size * 2 if marginX is None else marginX
+        for x in range(size, (self.field.x - size), marginX):
+            for row in range(rows):
+                coord = (x, marginY * (row + 1))
+                block = self.weapon.block(length=size)
+                self.field.write_at(item=block, coords=coord)
+                self.collidables.append((coord, block))
 
     def remove_paddle(self):
-        coord = (self.paddle.x, self.paddle_start_y)
+        coord = (self.paddle.x, self.paddleStartY)
         blank = ' ' * len(self.paddle.image)
         self.field.write_at(item=blank, coords=coord)
-        return
 
     def control(self, keystroke):
-        if keystroke == self.key['left']:
-            self.paddle.move('LEFT')
-        elif keystroke == self.key['right']:
-            self.paddle.move('RIGHT')
+        if keystroke == self.key[LEFT]:
+            self.paddle.move(LEFT)
+        elif keystroke == self.key[RIGHT]:
+            self.paddle.move(RIGHT)
         elif keystroke == self.key['q']:
             self.running = False
-        return
 
     def init_game(self):
         self.add_paddle()
         self.add_blocks()
-        return
 
-    def collision(self, ball):
-        direction = []
+    def move_ball(self):
+        ball = self.ball
+
+        ballDirections = []
+
         if ball.x < 1:
-            direction.append('right')
-        elif ball.x >= self.field.x-1:
-            direction.append('left')
+            ballDirections.append(RIGHT)
+        elif ball.x >= self.field.x - 1:
+            ballDirections.append(LEFT)
 
         if ball.y < 1:
-            direction.append('down')
-        elif ball.y >= self.field.y-2:
-            if ball.x >= self.paddle.x and ball.x <= (self.paddle.x + self.paddle.length):
-                direction.append('up')
+            ballDirections.append(DOWN)
+        elif ball.y >= self.field.y - 2:
+            if self.paddle.hit(ball):
+                ballDirections.append(UP)
             else:
-                self.running = False
+                self.running = False  # we lost right?, let's rub it in somehow
 
-        # collidables
-        if self.collidables != []:
-            for item in self.collidables:
-                x, y = item[0]
-                if ball.y in (y, y+1, y-1):
-                    if ball.x >= x and ball.x <= (x + len(item[1])):
+        self.ball.bounce(ballDirections)
+
+    def check_collisions(self):
+        ball = self.ball
+
+        if self.collidables:  # check if we hit anything
+            for block in self.collidables:
+                x, y = block[0]
+                # margin of error
+                if ball.y in (y, y + 1, y - 1):
+                    if ball.x in range(x, x + len(block[1]) + 1):
                         if ball.y == y:
                             ball.dx *= -1
                         else:
                             ball.dy *= -1
-                        self.field.remove(coords=item[0], item=item[1])
-                        self.collidables.pop(self.collidables.index(item))
-        if direction != []:
-            return ' '.join(direction)
-        if self.collidables == []:
-            self.add_blocks()
-        return None
+                        self.field.remove(coords=block[0], item=block[1])
+                        self.collidables.remove(block)
+        if not self.collidables:
+            raise Exception("Impossible!")  # you won!
 
-    def clearTrail(self, obj, remains=" ", centered=False):
-        for i in range(len(obj.image)):
+    def clear_trail(self, obj, remains=" ", centered=False):
+        for i in range(obj.length):
             x, y = obj.x + i, obj.y
-            self.field.write_at(item=remains, coords=(obj.x+i, obj.y), centered=centered)
-        return
+            self.field.write_at(item=remains, coords=(x, y), centered=centered)
 
-    def play(self, paddle, ball):
+    def autoplay(self, paddle, ball):
         x = paddle.x
         paddle.x = ball.x - paddle.half
         if paddle.x < 1 or paddle.x > (self.field.x - len(paddle.image)):
             paddle.x = x
-        return
 
     def update(self, keystroke=0, timer=0):
         self.remove_paddle()
-        self.play(self.paddle, self.ball)    # uncomment for AI
+        #  self.autoplay(self.paddle, self.ball)  # AI
         self.control(keystroke)
-        paddle_coord = (self.paddle.x, self.paddle_start_y)
-        self.field.write_at(item=self.paddle.image, coords=paddle_coord)
+        paddleCoord = (self.paddle.x, self.paddleStartY)
+        self.field.write_at(item=self.paddle.image, coords=paddleCoord)
 
         if timer % 10 == 1:
-            # ball
-            bounce = self.collision(self.ball)
-            if bounce:
-                self.ball.bounce(bounce)
-            self.clearTrail(self.ball, " ")
-            self.ball.move()
-            self.field.write_at(item=self.ball.image, coords=self.ball.getPosition())
+            # ball movement
+            self.clear_trail(self.ball, " ")
+            self.move_ball()
+            self.check_collisions()
+            self.field.write_at(
+                item=self.ball.image,
+                coords=self.ball.position
+            )
         self.field.deploy()
-        return
 
     def run(self):
         if not self.running:
@@ -200,9 +198,17 @@ class Blocker:
             c = self.field.display.getch()
             self.update(c, timer)
             time.sleep(self.speed)
-            timer += 1
+            timer = (timer + 1) % 100
         self.field.destroy()
-        return
 
-game = Blocker()
-game.run()
+    def quit(self):
+        self.field.destroy()
+
+
+if __name__ == '__main__':
+    try:
+        print 'Blocker v1.0'
+        game = BlockerGame()
+        game.run()
+    except KeyboardInterrupt:
+        game.quit()

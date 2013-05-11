@@ -28,3 +28,5 @@ class Key():
                 name = k.split('_')[1].lower()
                 self.key[name] = getattr(curses, k)
         return
+
+key = Key().key
