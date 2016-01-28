@@ -173,7 +173,7 @@ class BlockerGame(object):
 
     def update(self, keystroke=0, timer=0):
         self.remove_paddle()
-        #  self.autoplay(self.paddle, self.ball)  # AI
+        self.autoplay(self.paddle, self.ball)  # AI
         self.control(keystroke)
         paddleCoord = (self.paddle.x, self.paddleStartY)
         self.field.write_at(item=self.paddle.image, coords=paddleCoord)
