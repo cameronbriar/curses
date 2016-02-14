@@ -43,7 +43,7 @@ class MaskSaver(Saver):
         . . . . . . . .      . x x x x x x .      . . x x x x . .
         . . . . . . . .      . x x x x x x .      . . . . . . . .
         . . . . . . . .      . . . . . . . .      . . . . . . . .
-                                   X                     √ 
+                                  bad                  good
 
         I think the result where we look at the proportionality works best.
         The first transformation has a single border like the original,
@@ -51,14 +51,16 @@ class MaskSaver(Saver):
 
         What happens when it's more awkward?
 
-        . . . . . .    . . . . . .     . . . . . .
-        . . . . . . => . x x x x . or  . . x x . .
-        . . . . . .    . . . . . .     . . . . . .
+        . . . . . .      . . . . . .      . . . . . .
+        . . . . . .  =>  . x x x x .  or  . . x x . .
+        . . . . . .      . . . . . .      . . . . . .
+                             bad              good
 
         I still like the second transformation.
         So I guess when taking 1/2 of an odd, round down?
-
         """
+        pass
+
     def update(self):
         for ball in self.balls:
             hitWall = self.walled(ball)
